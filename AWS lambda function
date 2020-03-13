@@ -1,0 +1,45 @@
+import json
+import boto3
+
+def lambda_handler(event, context):
+    if 'first_name' and 'middle_name' and 'last_name' and 'zip_code' not in event:
+        return {
+            'statusCode': 400
+        }
+        
+    for  item in event:
+        if item == 'first_name':
+            first_name = event['first_name']
+        elif item == 'middle_name':
+            middle_name = event['middle_name']
+        elif item == 'last_name':
+            last_name = event['last_name']
+        elif item == 'zip_code':
+            zip_code = event['zip_code']
+            
+    file_content = []
+    file_content.append(first_name)
+    file_content.append(middle_name)
+    file_content.append(last_name)
+    file_content.append(zip_code)
+    
+    str_content = ",".join(file_content)
+            
+    BUCKET_NAME = 'manifold-objects'
+    file_path = 'object5.txt'
+    s3 = boto3.client('s3')
+    
+    
+    
+    try:
+        s3_response = s3.put_object(Bucket='manifold-objects', Key=file_path, Body=str_content.encode())
+        
+    except Exception as e:
+        raise IOError(e)
+    
+    return {
+        'statusCode': 200,
+        "body": {
+            "file_path": "object.txt"
+        }
+    }
